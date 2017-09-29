@@ -20,7 +20,7 @@ And tada!!
 Go to the Insomia plugin directory
 
 * Windows:  `%APPDATA%\Insomnia\plugins\`
-* Linux:    `$XDG_CONFIG_HOME/Insomnia/plugins/`
+* Linux:    `~/.config/Insomnia/plugins/` or `$XDG_CONFIG_HOME/Insomnia/plugins/`
 * MacOS:    `~/Library/Application\ Support/Insomnia/plugins/`
 
 And clone this repo in there
