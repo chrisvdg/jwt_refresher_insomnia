@@ -1,0 +1,24 @@
+{
+  "name": "insomnia-jwt-refresher",
+  "version": "0.0.0",
+  "description": "Returns a new token from provided IYO JWT with refresh token",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js"
+  },
+  "keywords": [
+    "insomnia",
+    "JWT",
+    "IYO",
+    "refresh"
+  ],
+  "insomnia": {
+    "name": "jwtRefresh",
+    "description": "Returns a new token from provided IYO JWT with refresh token"
+  },
+  "author": "Chris Van de Gejuchte",
+  "license": "MIT",
+  "dependencies": {
+    "request": "^2.83.0"
+  }
+}
