@@ -12,8 +12,8 @@ module.exports.templateTags = [{
             defaultValue: ''
         },
         {
-            displayName: 'JWT string',
-            description: 'original JWT string',
+            displayName: 'JWT lifespan',
+            description: 'JWT lifespan (in seconds) environmental variable',
             type: 'string',
             defaultValue: ''
         },
@@ -24,19 +24,22 @@ module.exports.templateTags = [{
             defaultValue: "https://itsyou.online/v1/oauth/jwt/refresh"
         }
     ],
-    async run (ctx, jwtVar, jwtStr, refreshURL) {
-        console.log(ctx.context);
-        console.log("JWT var to refresh: " + jwtVar);
-        console.log("JWT to refresh: " + jwtStr);
-        console.log("URL JWT refresh: " + refreshURL);
-        
-        jwt = ctx.context[jwtVar];
-        if (jwtStr != "") {
-            var jwt = jwtStr;
+    async run (ctx, jwtVar, lifespanVar, refreshURL) {
+        var jwt = ctx.context[jwtVar]
+        var lifespan = ctx.context[lifespanVar]
+
+        if (lifespan != "" && !Number.isInteger(lifespan)){
+            console.log("Invalid or empty jwt lifespan provided");
+            lifespan = 0
         }
 
+        console.log(ctx.context);
+        console.log("JWT to refresh: " + jwt);
+        console.log("JWT lifespan: " + lifespan);
+        console.log("URL JWT refresh: " + refreshURL);
+
         try{
-            var newToken = await getRefreshedJWT(jwt, refreshURL);
+            var newToken = await getRefreshedJWT(jwt, refreshURL, lifespan);
             console.log("Refreshed token: " + newToken);
             return newToken;
         } catch(err) {
@@ -47,9 +50,14 @@ module.exports.templateTags = [{
     }
 }];
 
-function getRefreshedJWT(jwt, refreshURL){
+function getRefreshedJWT(jwt, refreshURL, lifespan){
     console.log("JWT to refresh: " + jwt);
     console.log("URL JWT refresh: " + refreshURL);
+
+    if (lifespan != 0) {
+        refreshURL = refreshURL + "?validity=" + lifespan
+    }
+
     return new Promise(function(resolve, reject) {    
         var options = {
             method: 'GET',
