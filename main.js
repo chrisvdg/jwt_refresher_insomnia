@@ -1,4 +1,5 @@
 var request = require('request');
+var jwtLib = require('jsonwebtoken');
 
 module.exports.templateTags = [{
     name: 'jwtRefresh',
@@ -28,6 +29,12 @@ module.exports.templateTags = [{
         var jwt = ctx.context[jwtVar]
         var lifespan = ctx.context[lifespanVar]
 
+         // check expiration JWT
+         if (getTimeLeftJWT(jwt) > (new Date).getTime() / 1000 + 60) {
+            console.log("JWT has not expired");
+            return jwt;
+        }
+
         if (lifespan != "" && !Number.isInteger(lifespan)){
             console.log("Invalid or empty jwt lifespan provided");
             lifespan = 0
@@ -51,9 +58,6 @@ module.exports.templateTags = [{
 }];
 
 function getRefreshedJWT(jwt, refreshURL, lifespan){
-    console.log("JWT to refresh: " + jwt);
-    console.log("URL JWT refresh: " + refreshURL);
-
     if (lifespan != 0) {
         refreshURL = refreshURL + "?validity=" + lifespan
     }
@@ -75,4 +79,9 @@ function getRefreshedJWT(jwt, refreshURL, lifespan){
             reject(error);
         });
     });
+}
+
+function getTimeLeftJWT(jwt) {
+    var decoded = jwtLib.decode(jwt);
+    return decoded.exp
 }
