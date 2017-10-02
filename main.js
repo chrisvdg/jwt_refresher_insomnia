@@ -14,7 +14,7 @@ module.exports.templateTags = [{
             defaultValue: ''
         },
         {
-            displayName: 'JWT lifespan',
+            displayName: 'JWT lifespan variable',
             description: 'JWT lifespan (in seconds) environmental variable',
             type: 'string',
             defaultValue: ''
@@ -27,8 +27,12 @@ module.exports.templateTags = [{
         }
     ],
     async run (ctx, jwtVar, lifespanVar, refreshURL) {
-        var jwt = ctx.context[jwtVar]
-        var lifespan = ctx.context[lifespanVar]
+        var jwt = ctx.context[jwtVar];
+        var lifespan = Math.floor(ctx.context[lifespanVar]);
+
+        if (jwt == null) {
+            return
+        }
 
          // check expiration JWT
          if (getTimeLeftJWT(jwt) > (new Date).getTime() / 1000 + 60) {
@@ -44,10 +48,10 @@ module.exports.templateTags = [{
                 return bJWT;
             }
         }
-        
+
         if (lifespan != "" && !Number.isInteger(lifespan)){
             console.log("Invalid or empty jwt lifespan provided");
-            lifespan = 0
+            lifespan = 0;
         }
 
         console.log(ctx.context);
@@ -70,7 +74,7 @@ module.exports.templateTags = [{
 
 function getRefreshedJWT(jwt, refreshURL, lifespan){
     if (lifespan != 0) {
-        refreshURL = refreshURL + "?validity=" + lifespan
+        refreshURL = refreshURL + "?validity=" + lifespan;
     }
 
     return new Promise(function(resolve, reject) {    
@@ -94,7 +98,7 @@ function getRefreshedJWT(jwt, refreshURL, lifespan){
 
 function getTimeLeftJWT(jwt) {
     var decoded = jwtLib.decode(jwt);
-    return decoded.exp
+    return decoded.exp;
 }
 
 function inArray(array, key) {

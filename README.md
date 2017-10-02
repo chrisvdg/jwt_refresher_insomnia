@@ -8,7 +8,7 @@ Just type jwt and the plugin should pop up.
 
 ![Plugin is selected](assets/use2.png)
 
-By clicking on the plugin, you can set the the environmental JWT variable and the environmental lifespan variable. If no lifespan variable is provided or is invalid, it will be omitted from the request.
+By clicking on the plugin, you can set the the environmental JWT variable and the environmental lifespan variable (number in seconds). If no lifespan variable is provided or is invalid, it will be omitted from the request.
 
 ![Plugin options](assets/use3.png)
 
