@@ -8,7 +8,9 @@ Just type jwt and the plugin should pop up.
 
 ![Plugin is selected](assets/use2.png)
 
-By clicking on the plugin, you can set the JWT that needs to be refreshed and the destination URL that refreshes the JWT
+By clicking on the plugin, you can set the JWT that needs to be refreshed and the destination URL that refreshes the JWT.  
+You can either specify the name of an environmental variable where a JWT is stored  
+or provide the JWT itself, if both are provided, the plugin will take the provided JWT over the environmental variable.
 
 ![Plugin options](assets/use3.png)
 
