@@ -1,6 +1,6 @@
 var request = require('request');
 var jwtLib = require('jsonwebtoken');
-var jwtBuffer = []
+var jwtBuffer = [];
 
 module.exports.templateTags = [{
     name: 'jwtRefresh',
@@ -29,9 +29,14 @@ module.exports.templateTags = [{
     async run (ctx, jwtVar, lifespanVar, refreshURL) {
         var jwt = ctx.context[jwtVar];
         var lifespan = Math.floor(ctx.context[lifespanVar]);
+        if (lifespan != "" && !Number.isInteger(lifespan)){
+            console.log("Invalid or empty jwt lifespan provided");
+            lifespan = 0;
+        }
+        
 
         if (jwt == null) {
-            return
+            return;
         }
 
          // check expiration JWT
@@ -41,17 +46,13 @@ module.exports.templateTags = [{
         }
 
         // check if valid jwt in buffer
-        if (inArray(jwtBuffer, jwt)){
-            bJWT = jwtBuffer[jwt];
+        // if lifespan is different, don't use cache
+        if (inArray(jwtBuffer, jwt) && lifespan == jwtBuffer[jwt]["lifespan"]){
+            bJWT = jwtBuffer[jwt]["rjwt"];
             if (getTimeLeftJWT(bJWT) > (new Date).getTime() / 1000 + 60) {
                 console.log("Using buffered refreshed JWT");
                 return bJWT;
             }
-        }
-
-        if (lifespan != "" && !Number.isInteger(lifespan)){
-            console.log("Invalid or empty jwt lifespan provided");
-            lifespan = 0;
         }
 
         console.log(ctx.context);
@@ -62,7 +63,7 @@ module.exports.templateTags = [{
         try{
             var newToken = await getRefreshedJWT(jwt, refreshURL, lifespan);
             console.log("Refreshed token: " + newToken);
-            jwtBuffer[jwt] = newToken;
+            jwtBuffer[jwt] = {rjwt: newToken, lifespan: lifespan};
             return newToken;
         } catch(err) {
             console.log("Failed to get a refreshed token");
